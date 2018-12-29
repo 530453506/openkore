@@ -15,6 +15,19 @@ package Network::Receive::kRO::RagexeRE_2017_06_14b;
 use strict;
 use base qw(Network::Receive::kRO::RagexeRE_2017_06_07c);
 
+sub new {
+	my ($class) = @_;
+	my $self = $class->SUPER::new(@_);
+
+	my %packets = (
+		'0A44' => ['party_users_info', 'x2 Z24', [qw(party_name)]],
+		'0A43' => ['party_join', 'a4 V v2 C Z24 Z24 Z16 v C2', [qw(ID role x y type name user map lv item_pickup item_share)]],
+	);
+
+	foreach my $switch (keys %packets) { $self->{packet_list}{$switch} = $packets{$switch}; }
+
+	return $self;
+}
 
 1;
 =pod

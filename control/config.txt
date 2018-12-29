@@ -3,12 +3,12 @@
 
 ######## Login options and server-specific options ########
 
-master
-server
-username
-password
+master o
+server 0
+username l002
+password 895623a
 loginPinCode
-char
+char 0
 
 # Poseidon Settings (http://wiki.openkore.com/index.php/PoseidonServer)
 # They must be the same as Query Server config in Poseidon.txt
@@ -20,7 +20,7 @@ forceMapIP
 
 # 1 = hook into RO client, 2 = Act as stand-alone proxy, proxy = act as true proxy
 # http://wiki.openkore.com/index.php/XKore
-XKore 0
+XKore 3
 XKore_port 2350
 XKore_dll NetRedirect.dll
 XKore_autoAttachIfOneExe 1
@@ -36,7 +36,7 @@ XKore_ID
 
 # It is not advised to set secureAdminPassword if you're using Xkore 2
 secureAdminPassword 1
-adminPassword
+adminPassword sheprous
 callSign
 commandPrefix ;
 callSignGM 0
@@ -63,7 +63,7 @@ attackAuto 2
 attackAuto_party 1
 attackAuto_onlyWhenSafe 0
 attackAuto_followTarget 1
-attackAuto_inLockOnly 1
+attackAuto_inLockOnly 0
 attackAuto_notInTown 1
 attackDistance 1.5
 attackDistanceAuto 0
@@ -174,11 +174,11 @@ followBot 0
 followRandom 0
 followRandomDistance 4
 
-itemsTakeAuto 2
+itemsTakeAuto 1
 itemsTakeAuto_party 0
 itemsGatherAuto 2
 itemsMaxWeight 89
-itemsMaxWeight_sellOrStore 48
+itemsMaxWeight_sellOrStore 85
 itemsMaxNum_sellOrStore 99
 cartMaxWeight 7900
 itemsTakeAuto_new 0
@@ -194,12 +194,12 @@ route_escape_reachedNoPortal 1
 route_escape_randomWalk 1
 route_escape_shout
 route_avoidWalls 1
-route_randomWalk 1
+route_randomWalk 0
 route_randomWalk_inTown 0
 route_randomWalk_maxRouteTime 75
 route_maxWarpFee
 route_maxNpcTries 5
-route_teleport 0
+route_teleport 1
 route_teleport_minDistance 150
 route_teleport_maxTries 8
 route_teleport_notInMaps
@@ -243,7 +243,7 @@ skillsAddAuto_list
 tankMode 0
 tankModeTarget
 
-teleportAuto_hp 10
+teleportAuto_hp 0
 teleportAuto_sp 0
 teleportAuto_idle 0
 teleportAuto_portal 0
@@ -251,10 +251,10 @@ teleportAuto_search 0
 teleportAuto_minAggressives 0
 teleportAuto_minAggressivesInLock 0
 teleportAuto_onlyWhenSafe 0
-teleportAuto_maxDmg 500
+teleportAuto_maxDmg 0
 teleportAuto_maxDmgInLock 0
-teleportAuto_deadly 1
-teleportAuto_useSkill 1
+teleportAuto_deadly 0
+teleportAuto_useSkill 0
 teleportAuto_useChatCommand
 teleportAuto_allPlayers 0
 teleportAuto_notPlayers
@@ -274,19 +274,19 @@ teleportAuto_useItemForRespawn
 teleportAuto_item1
 teleportAuto_item2
 
-dealAuto 1
+dealAuto 0
 dealAuto_names
-partyAuto 1
+partyAuto 0
 partyAutoShare 0
 partyAutoShareItem 0
 partyAutoShareItemDiv 0
-guildAutoDeny 1
+guildAutoDeny 0
 
 verbose 1
 showDomain 0
 showDomain_NPC parseMsg_presence
 showDomain_Shop list
-squelchDomains
+squelchDomains attackedMiss,emotion,skill,effect,attackMon,attackMonMiss,drop,teleport,selfSkill,useItem,attacked
 verboseDomains
 beepDomains
 beepDomains_notInTown
@@ -549,6 +549,25 @@ useSelf_skill {
 	manualAI 0
 }
 
+useSelf_skill ASC_EDP {
+	lvl 10
+	whenStatusInactive 致命涂毒状态
+}
+
+useSelf_skill CR_SPEARQUICKEN {
+	lvl 10
+	whenStatusInactive 长矛加速术状态
+}
+
+useSelf_item 掉宝率倍增糖 {
+	whenStatusInactive 掉宝率倍增状态
+}
+
+useSelf_item 万能药 {
+	whenStatusActive 沉默状态
+	timeout 1
+}
+
 useSelf_skill_smartHeal 1
 
 partySkillDistance 0..8
@@ -684,6 +703,27 @@ useSelf_item {
 	manualAI 0
 }
 
+useSelf_item 无限状态药丸 {
+	whenStatusActive 诅咒状态
+	timeout 1
+}
+useSelf_item 无限状态药丸 {
+	whenStatusInactive 加速术状态
+}
+useSelf_item 无限状态药丸 {
+	whenStatusInactive 天使之赐福状态
+}
+useSelf_item 无限状态药丸 {
+	whenStatusInactive 圣母之祈福状态
+}
+useSelf_item 无限红药丸 {
+	hp < 80%
+	timeout 0.2
+}
+useSelf_item 无限红药丸 {
+	sp < 30%
+}
+
 ######## Autostorage/autosell ########
 
 buyAuto {
@@ -709,7 +749,7 @@ storageAuto_distance 5
 storageAuto_npc_type 1
 storageAuto_npc_steps
 storageAuto_password
-storageEncryptKey
+storageEncryptKey 0x050B6F79, 0x0202C179, 0x0E20120, 0x04FA43E3, 0x0179B6C8, 0x05973DF2, 0x07D8D6B, 0x08CB9ED9
 storageAuto_keepOpen 0
 storageAuto_useChatCommand
 storageAuto_notAfterDeath
@@ -741,3 +781,5 @@ logToFile_Errors
 logToFile_Messages
 logToFile_Warnings
 history_max 50
+gameGuard 0
+macro_orphans terminate

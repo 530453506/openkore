@@ -1562,7 +1562,7 @@ sub chat_users {
 	}
 
 	message TF("You have joined the Chat Room %s\n", $chat->{title});
-	
+
 	Plugins::callHook('chat_joined', {
 		chat => $chat,
 	});
@@ -2217,7 +2217,7 @@ sub mvp_you {
 sub npc_sell_list {
 	my ($self, $args) = @_;
 	#sell list, similar to buy list
-	
+
 	debug T("You can sell:\n"), "info";
 	for (my $i = 0; $i < length($args->{itemsdata}); $i += 10) {
 		my ($index, $price, $price_overcharge) = unpack("a2 L L", substr($args->{itemsdata},$i,($i + 10)));
@@ -2225,12 +2225,12 @@ sub npc_sell_list {
 		$item->{sellable} = 1; # flag this item as sellable
 		debug TF("%s x %s for %sz each. \n", $item->{amount}, $item->{name}, $price_overcharge), "info";
 	}
-	
+
 	foreach my $item (@{$char->inventory->getItems()}) {
 		next if ($item->{equipped} || $item->{sellable});
 		$item->{unsellable} = 1; # flag this item as unsellable
 	}
-	
+
 	undef %talk;
 	message T("Ready to start selling items\n");
 
@@ -2241,7 +2241,7 @@ sub npc_sell_list {
 
 sub npc_talk {
 	my ($self, $args) = @_;
-	
+
 	#Auto-create Task::TalkNPC if not active
 	if (!AI::is("NPC") && !(AI::is("route") && $char->args->getSubtask && UNIVERSAL::isa($char->args->getSubtask, 'Task::TalkNPC'))) {
 		my $nameID = unpack 'V', $args->{ID};
@@ -2264,7 +2264,7 @@ sub npc_talk {
 	# Remove RO color codes
 	$talk{msg} =~ s/\^[a-fA-F0-9]{6}//g;
 	$msg =~ s/\^[a-fA-F0-9]{6}//g;
- 
+
 	# Prepend existing conversation.
 	$talk{msg} .= "\n" if $talk{msg};
 	$talk{msg} .= $msg;
@@ -2582,7 +2582,7 @@ sub party_users_info {
 	my $msg = $args->{RAW_MSG};
 	$char->{party}{name} = bytesToString($args->{party_name});
 
-	for (my $i = 28; $i < $args->{RAW_MSG_SIZE}; $i += 46) {
+	for (my $i = 28; $i < $args->{RAW_MSG_SIZE}; $i += 50) {
 		my $ID = substr($msg, $i, 4);
 		if (binFind(\@partyUsersID, $ID) eq "") {
 			binAdd(\@partyUsersID, $ID);
@@ -2594,7 +2594,7 @@ sub party_users_info {
 		$char->{party}{users}{$ID}{online} = !(unpack("C1",substr($msg, $i + 45, 1)));
 		$char->{party}{users}{$ID}->{ID} = $ID;
 		debug TF("Party Member: %s (%s)\n", $char->{party}{users}{$ID}{name}, $char->{party}{users}{$ID}{map}), "party", 1;
-	}	
+	}
 }
 
 sub pet_capture_result {
@@ -2898,7 +2898,7 @@ sub received_characters {
 	# FIXME better support for multiple received_characters packets
 	## Note to devs: If other official servers support > 3 characters, then
 	## you should add these other serverTypes to the list compared here:
-	if (($args->{switch} eq '099D') && 
+	if (($args->{switch} eq '099D') &&
 		(grep { $masterServer->{serverType} eq $_ } qw( twRO iRO idRO bRO ))
 	) {
 		$net->setState(1.5);
@@ -2915,17 +2915,17 @@ sub received_characters {
 	# it doesn't work...
 	# 30 Dec 2005: it didn't work before because it wasn't sending the accountiD -> fixed (kaliwanagan)
 	$messageSender->sendBanCheck($accountID) if (!$net->clientAlive && $masterServer->{serverType} == 2);
-	
+
 	if ($masterServer->{pinCode}) {
 		message T("Waiting for PIN code request\n"), "connection";
 		$timeout{'charlogin'}{'time'} = time;
-		
+
 	} elsif ($masterServer->{pauseCharLogin}) {
 		if (!defined $timeout{'char_login_pause'}{'timeout'}) {
 			$timeout{'char_login_pause'}{'timeout'} = 2;
 		}
 		$timeout{'char_login_pause'}{'time'} = time;
-		
+
 	} else {
 		CharacterLogin();
 	}
@@ -3504,7 +3504,7 @@ sub skill_use {
 	if ($args->{sourceID} eq $accountID	&& $char->statusActive('EFST_MAGICPOWER') && $args->{skillID} != 366) {
 		$char->setStatus("EFST_MAGICPOWER", 0);
 	}
-	
+
 	Plugins::callHook('packet_skilluse', {
 			'skillID' => $args->{skillID},
 			'sourceID' => $args->{sourceID},
@@ -3593,7 +3593,7 @@ sub skill_use_location {
 	if ($args->{sourceID} eq $accountID	&& $char->statusActive('EFST_MAGICPOWER') && $args->{skillID} != 366) {
 		$char->setStatus("EFST_MAGICPOWER", 0);
 	}
-	
+
 	Plugins::callHook('packet_skilluse', {
 		'skillID' => $skillID,
 		'sourceID' => $sourceID,
@@ -3673,12 +3673,12 @@ sub skill_used_no_damage {
 			}
 		}
 	}
-	
+
 	#EFST_MAGICPOWER OVERRIDE
 	if ($args->{sourceID} eq $accountID	&& $char->statusActive('EFST_MAGICPOWER') && $args->{skillID} != 366) {
 		$char->setStatus("EFST_MAGICPOWER", 0);
 	}
-	
+
 	Plugins::callHook('packet_skilluse', {
 		skillID => $args->{skillID},
 		sourceID => $args->{sourceID},
@@ -4096,7 +4096,7 @@ our %stat_info_handlers = (
 		message sprintf($actor->verb("%s are now job level %d\n", "%s is now job level %d\n"), $actor, $actor->{lv_job}), "success", $actor->isa('Actor::You') ? 1 : 2;
 
 		return unless $actor->isa('Actor::You');
-		
+
 		Plugins::callHook('job_level_changed', {
 			level	=> $actor->{lv_job}
 		});
@@ -4762,15 +4762,15 @@ sub rates_info {
 
 sub rates_info2 {
 	my ($self, $args) = @_;
-	
+
 	my $msg = $args->{RAW_MSG};
 	my $msg_size = $args->{RAW_MSG_SIZE};
 	my $header_pack = 'v V3';
 	my $header_len = ((length pack $header_pack) + 2);
-	
+
 	my $detail_pack = 'C l3';
 	my $detail_len = length pack $detail_pack;
-	
+
 	my %rates = (
 		exp => { total => $args->{exp}/1000 }, # Value to Percentage => /100
 		death => { total => $args->{death}/1000 }, # 1 d.p. => /10
@@ -4779,9 +4779,9 @@ sub rates_info2 {
 
 	# get details
 	for (my $i = $header_len; $i < $args->{RAW_MSG_SIZE}; $i += $detail_len) {
-	
+
 		my ($type, $exp, $death, $drop) = unpack($detail_pack, substr($msg, $i, $detail_len));
-		
+
 		$rates{exp}{$type} = $exp/1000;
 		$rates{death}{$type} = $death/1000;
 		$rates{drop}{$type} = $drop/1000;
@@ -5882,15 +5882,15 @@ sub quest_all_list3 {
 
 sub achievement_list {
 	my ($self, $args) = @_;
-	
+
 	$achievementList = {};
-	
+
 	my $msg = $args->{RAW_MSG};
 	my $msg_size = $args->{RAW_MSG_SIZE};
 	my $headerlen = 22;
 	my $achieve_pack = 'V C V10 V C';
 	my $achieve_len = length pack $achieve_pack;
-	
+
 	for (my $i = $headerlen; $i < $args->{RAW_MSG_SIZE}; $i+=$achieve_len) {
 		my $achieve;
 
@@ -5908,7 +5908,7 @@ sub achievement_list {
 		$achieve->{objective10},
 		$achieve->{completed_at},
 		$achieve->{reward})	= unpack($achieve_pack, substr($msg, $i, $achieve_len));
-		
+
 		$achievementList->{$achieve->{ach_id}} = $achieve;
 		message TF("Achievement %s added.\n", $achieve->{ach_id}), "info";
 	}
@@ -5916,10 +5916,10 @@ sub achievement_list {
 
 sub achievement_update {
 	my ($self, $args) = @_;
-	
+
 	my $achieve;
 	@{$achieve}{qw(ach_id completed objective1 objective2 objective3 objective4 objective5 objective6 objective7 objective8 objective9 objective10 completed_at reward)} = @{$args}{qw(ach_id completed objective1 objective2 objective3 objective4 objective5 objective6 objective7 objective8 objective9 objective10 completed_at reward)};
-	
+
 	$achievementList->{$achieve->{ach_id}} = $achieve;
 	message TF("Achievement %s added or updated.\n", $achieve->{ach_id}), "info";
 }
@@ -5931,27 +5931,27 @@ sub achievement_reward_ack {
 
 sub show_script {
 	my ($self, $args) = @_;
-	
+
 	debug "$args->{ID}\n", 'parseMsg';
 }
 
 sub senbei_amount {
 	my ($self, $args) = @_;
-	
+
 	$char->{senbei} = $args->{senbei};
 }
 
 sub rodex_mail_list {
 	my ( $self, $args ) = @_;
-	
+
 	my $msg = $args->{RAW_MSG};
 	my $msg_size = $args->{RAW_MSG_SIZE};
 	my $header_pack = 'v C C C';
 	my $header_len = ((length pack $header_pack) + 2);
-	
+
 	my $mail_pack = 'V2 C C Z24 V V v';
 	my $base_mail_len = length pack $mail_pack;
-	
+
 	if ($args->{switch} eq '0A7D') {
 		$rodexList->{current_page} = 0;
 		$rodexList = {};
@@ -5959,17 +5959,17 @@ sub rodex_mail_list {
 	} else {
 		$rodexList->{current_page}++;
 	}
-	
+
 	if ($args->{isEnd} == 1) {
 		$rodexList->{last_page} = $rodexList->{current_page};
 	} else {
 		$rodexList->{mails_per_page} = $args->{amount};
 	}
-	
+
 	my $mail_len;
-	
+
 	my $print_msg = center(" " . "Rodex Mail Page ". $rodexList->{current_page} . " ", 79, '-') . "\n";
-	
+
 	my $index = 0;
 	for (my $i = $header_len; $i < $args->{RAW_MSG_SIZE}; $i+=$mail_len) {
 		my $mail;
@@ -5982,20 +5982,20 @@ sub rodex_mail_list {
 		$mail->{regDateTime},
 		$mail->{expireDateTime},
 		$mail->{Titlelength}) = unpack($mail_pack, substr($msg, $i, $base_mail_len));
-		
+
 		$mail->{title} = substr($msg, ($i+$base_mail_len), $mail->{Titlelength});
-		
+
 		$mail->{page} = $rodexList->{current_page};
 		$mail->{page_index} = $index;
-		
+
 		$mail_len = $base_mail_len + $mail->{Titlelength};
-		
+
 		$rodexList->{mails}{$mail->{mailID1}} = $mail;
-		
+
 		$rodexList->{current_page_last_mailID} = $mail->{mailID1};
-		
+
 		$print_msg .= swrite("@<<< @<<<<< @<<<<<<<<<<<<<<<<<<<<<<<< @<<<<<< @<<< @<<< @<<<<<<<< @<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<", [$index, "From:", $mail->{sender}, "Read:", $mail->{isRead} ? "Yes" : "No", "ID:", $mail->{mailID1}, "Title:", $mail->{title}]);
-		
+
 		$index++;
 	}
 	$print_msg .= sprintf("%s\n", ('-'x79));
@@ -6004,37 +6004,37 @@ sub rodex_mail_list {
 
 sub rodex_read_mail {
 	my ( $self, $args ) = @_;
-	
+
 	my $msg = $args->{RAW_MSG};
 	my $msg_size = $args->{RAW_MSG_SIZE};
 	my $header_pack = 'v C V2 v V2 C';
 	my $header_len = ((length pack $header_pack) + 2);
-	
+
 	my $mail = {};
-	
+
 	$mail->{body} = substr($msg, $header_len, $args->{text_len});
 	$mail->{zeny1} = $args->{zeny1};
 	$mail->{zeny2} = $args->{zeny2};
-	
+
 	my $item_pack = 'v2 C3 a8 a4 C a4 a25';
 	my $item_len = length pack $item_pack;
-	
+
 	my $mail_len;
-	
+
 	$mail->{items} = [];
-	
+
 	my $print_msg = center(" " . "Mail ".$args->{mailID1} . " ", 79, '-') . "\n";
-	
+
 	my @message_parts = unpack("(A51)*", $mail->{body});
-	
+
 	$print_msg .= swrite("@<<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", ["Message:", $message_parts[0]]);
-	
+
 	foreach my $part (@message_parts[1..$#message_parts]) {
 		$print_msg .= swrite("@<<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", ["", $part]);
 	}
-	
+
 	$print_msg .= swrite("@<<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", ["Item count:", $args->{itemCount}]);
-	
+
 	$print_msg .= swrite("@<<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", ["Zeny:", $args->{zeny1}]);
 
 	my $index = 0;
@@ -6050,25 +6050,25 @@ sub rodex_read_mail {
 		$item->{type},
 		$item->{unknow2},
 		$item->{options}) = unpack($item_pack, substr($msg, $i, $item_len));
-		
+
 		$item->{name} = itemName($item);
-		
+
 		my $display = $item->{name};
 		$display .= " x $item->{amount}";
-		
+
 		$print_msg .= swrite("@<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", [$index, $display]);
-		
+
 		push(@{$mail->{items}}, $item);
 		$index++;
 	}
-	
+
 	$print_msg .= sprintf("%s\n", ('-'x79));
 	message $print_msg, "list";
-	
+
 	@{$rodexList->{mails}{$args->{mailID1}}}{qw(body items zeny1 zeny2)} = @{$mail}{qw(body items zeny1 zeny2)};
-	
+
 	$rodexList->{mails}{$args->{mailID1}}{isRead} = 1;
-	
+
 	$rodexList->{current_read} = $args->{mailID1};
 }
 
@@ -6079,18 +6079,18 @@ sub unread_rodex {
 
 sub rodex_remove_item {
 	my ( $self, $args ) = @_;
-	
+
 	if (!$args->{result}) {
 		error "You failed to remove an item from rodex mail.\n";
 		return;
 	}
-	
+
 	my $rodex_item = $rodexWrite->{items}->getByID($args->{ID});
-	
+
 	my $disp = TF("Item removed from rodex mail message: %s (%d) x %d - %s",
 			$rodex_item->{name}, $rodex_item->{binID}, $args->{amount}, $itemTypes_lut{$rodex_item->{type}});
 	message "$disp\n", "drop";
-	
+
 	$rodex_item->{amount} -= $args->{amount};
 	if ($rodex_item->{amount} <= 0) {
 		$rodexWrite->{items}->remove($rodex_item);
@@ -6099,14 +6099,14 @@ sub rodex_remove_item {
 
 sub rodex_add_item {
 	my ( $self, $args ) = @_;
-	
+
 	if ($args->{fail}) {
 		error "You failed to add an item to rodex mail.\n";
 		return;
 	}
-	
+
 	my $rodex_item = $rodexWrite->{items}->getByID($args->{ID});
-	
+
 	if ($rodex_item) {
 		$rodex_item->{amount} += $args->{amount};
 	} else {
@@ -6124,7 +6124,7 @@ sub rodex_add_item {
 
 		$rodexWrite->{items}->add($rodex_item);
 	}
-	
+
 	my $disp = TF("Item added to rodex mail message: %s (%d) x %d - %s",
 			$rodex_item->{name}, $rodex_item->{binID}, $args->{amount}, $itemTypes_lut{$rodex_item->{type}});
 	message "$disp\n", "drop";
@@ -6132,76 +6132,76 @@ sub rodex_add_item {
 
 sub rodex_open_write {
 	my ( $self, $args ) = @_;
-	
+
 	$rodexWrite = {};
-	
+
 	$rodexWrite->{items} = new InventoryList;
-	
+
 }
 
 sub rodex_check_player {
 	my ( $self, $args ) = @_;
-	
+
 	if (!$args->{char_id}) {
 		error "Could not find player with name '".$args->{name}."'.";
 		return;
 	}
-	
+
 	my $print_msg = center(" " . "Rodex Mail Target" . " ", 79, '-') . "\n";
-	
+
 	$print_msg .= swrite("@<<<<< @<<<<<<<<<<<<<<<<<<<<<<<< @<<<<<<<<<<< @<<< @<<<<<< @<<<<<<<<<<<<<<< @<<<<<<<< @<<<<<<<<<", ["Name:", $args->{name}, "Base Level:", $args->{base_level}, "Class:", $args->{class}, "Char ID:", $args->{char_id}]);
-	
+
 	$print_msg .= sprintf("%s\n", ('-'x79));
 	message $print_msg, "list";
-	
+
 	@{$rodexWrite->{target}}{qw(name base_level class char_id)} = @{$args}{qw(name base_level class char_id)};
 }
 
 sub rodex_write_result {
 	my ( $self, $args ) = @_;
-	
+
 	if ($args->{fail}) {
 		error "You failed to send the rodex mail.\n";
 		return;
 	}
-	
+
 	message "Your rodex mail was sent with success.\n";
 	undef $rodexWrite;
 }
 
 sub rodex_get_zeny {
 	my ( $self, $args ) = @_;
-	
+
 	if ($args->{fail}) {
 		error "You failed to get the zeny of the rodex mail.\n";
 		return;
 	}
-	
+
 	message "The zeny of the rodex mail was requested with success.\n";
-	
+
 	$rodexList->{mails}{$args->{mailID1}}{zeny1} = 0;
 }
 
 sub rodex_get_item {
 	my ( $self, $args ) = @_;
-	
+
 	if ($args->{fail}) {
 		error "You failed to get the items of the rodex mail.\n";
 		return;
 	}
-	
+
 	message "The items of the rodex mail were requested with success.\n";
-	
+
 	$rodexList->{mails}{$args->{mailID1}}{items} = [];
 }
 
 sub rodex_delete {
 	my ( $self, $args ) = @_;
-	
+
 	return unless (exists $rodexList->{mails}{$args->{mailID1}});
-	
+
 	message "You have deleted the mail of ID ".$args->{mailID1}.".\n";
-	
+
 	delete $rodexList->{mails}{$args->{mailID1}};
 }
 
@@ -6210,7 +6210,7 @@ sub monster_hp_info_tiny {
 	my $monster = $monstersList->getByID($args->{ID});
 	if ($monster) {
 		$monster->{hp_percent} = $args->{hp} * 5;
-		
+
 		debug TF("Monster %s has about %d%% hp left\n", $monster->name, $monster->{hp_percent}), "parseMsg_damage";
 	}
 }
